@@ -1,47 +1,117 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  let codes = [];
+
+  // async function postData() {
+  //   const response = await fetch(
+  //     "https://v6.exchangerate-api.com/v6/3141f990c68238e3b680d17d/codes",
+  //     {
+  //       method: "GET",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     }
+  //   );
+  //   return await response.json();
+  // }
+
+  // postData().then((data) => {
+  //   codes = data.supported_codes;
+  // });
+
+  let select1;
+  let select2;
+
+  let input1;
+  let input2;
+
+  $: if (select1) {
+    select1.onchange = select1Change;
+  }
+
+  $: if (select2) {
+    select2.onchange = select2Change;
+  }
+
+  let cur1 = "USD";
+  let cur2 = "USD";
+
+  function select1Change() {
+    cur1 = (select1 as HTMLInputElement).value;
+    getCur(cur1, cur2).then((data) => {
+      (input2 as HTMLInputElement).value = String(
+        +(input1 as HTMLInputElement).value * data.conversion_rate
+      );
+    });
+  }
+
+  function select2Change() {
+    cur2 = (select2 as HTMLInputElement).value;
+    getCur(cur1, cur2).then((data) => {
+      (input2 as HTMLInputElement).value = String(
+        +(input1 as HTMLInputElement).value * data.conversion_rate
+      );
+    });
+  }
+
+  $: if (input1) {
+    input1.onchange = input1Change;
+  }
+
+  $: if (input2) {
+    input2.onchange = input2Change;
+  }
+
+  async function getCur(cur1: string, cur2: string) {
+    const response = await fetch(
+      "https://v6.exchangerate-api.com/v6/3141f990c68238e3b680d17d/pair/" +
+        cur1 +
+        "/" +
+        cur2,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    return await response.json();
+  }
+
+  function input1Change() {
+    getCur(cur1, cur2).then((data) => {
+      (input2 as HTMLInputElement).value = String(
+        +(input1 as HTMLInputElement).value * data.conversion_rate
+      );
+    });
+  }
+
+  function input2Change() {
+    getCur(cur1, cur2).then((data) => {
+      (input1 as HTMLInputElement).value = String(
+        +(input2 as HTMLInputElement).value / data.conversion_rate
+      );
+    });
+  }
 </script>
 
 <main>
-  <div>
-    <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-      <img src={viteLogo} class="logo" alt="Vite Logo" />
-    </a>
-    <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-      <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-    </a>
-  </div>
-  <h1>Vite + Svelte</h1>
-
-  <div class="card">
-    <Counter />
-  </div>
-
-  <p>
-    Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-  </p>
-
-  <p class="read-the-docs">
-    Click on the Vite and Svelte logos to learn more
-  </p>
+  <form>
+    <label for="cur1">Валюта1:</label>
+    <select id="select1" bind:this={select1}>
+      <option value="USD">USD</option>
+      <option value="RUB">RUB</option>
+    </select>
+    <input type="number" bind:this={input1} />
+  </form>
+  <form>
+    <label for="cur2">Валюта 2:</label>
+    <select id="select2" bind:this={select2}>
+      <option value="USD">USD</option>
+      <option value="RUB">RUB</option>
+    </select>
+    <input type="number" bind:this={input2} />
+  </form>
 </main>
 
 <style>
-  .logo {
-    height: 6em;
-    padding: 1.5em;
-    will-change: filter;
-    transition: filter 300ms;
-  }
-  .logo:hover {
-    filter: drop-shadow(0 0 2em #646cffaa);
-  }
-  .logo.svelte:hover {
-    filter: drop-shadow(0 0 2em #ff3e00aa);
-  }
-  .read-the-docs {
-    color: #888;
-  }
 </style>
