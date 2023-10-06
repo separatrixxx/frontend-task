@@ -100,6 +100,10 @@
     <select id="select1" bind:this={select1}>
       <option value="USD">USD</option>
       <option value="RUB">RUB</option>
+      <option value="EUR">EUR</option>
+      <option value="EUR">AUD</option>
+      <option value="CNY">CNY</option>
+      <option value="CNY">JPY</option>
     </select>
     <input type="number" bind:this={input1} />
   </form>
@@ -108,6 +112,10 @@
     <select id="select2" bind:this={select2}>
       <option value="USD">USD</option>
       <option value="RUB">RUB</option>
+      <option value="EUR">EUR</option>
+      <option value="EUR">AUD</option>
+      <option value="CNY">CNY</option>
+      <option value="CNY">JPY</option>
     </select>
     <input type="number" bind:this={input2} />
   </form>
